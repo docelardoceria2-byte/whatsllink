@@ -41,6 +41,10 @@ export function LinkGenerator() {
   const [shortLink, setShortLink] = useState<string | null>(null);
   const [shortCopied, setShortCopied] = useState(false);
   const [shortening, setShortening] = useState(false);
+  const [alias, setAlias] = useState("");
+  const [editToken, setEditToken] = useState<string | null>(null);
+  const [editing, setEditing] = useState(false);
+  const [aliasError, setAliasError] = useState<string | null>(null);
 
 
   const digits = phone.replace(/\D/g, "");
@@ -85,24 +89,80 @@ export function LinkGenerator() {
     }
   }
 
+  const ALIAS_RE = /^[a-zA-Z0-9_-]{3,32}$/;
+
+  function aliasProblem(value: string) {
+    if (!ALIAS_RE.test(value))
+      return "Use de 3 a 32 caracteres: letras, números, hífen ou _ (sem espaços ou acentos).";
+    return null;
+  }
+
   async function shorten() {
     if (!link || shortening) return;
+    const custom = alias.trim();
+    if (custom) {
+      const problem = aliasProblem(custom);
+      if (problem) {
+        setAliasError(problem);
+        return;
+      }
+    }
     setShortening(true);
+    setAliasError(null);
     setError(null);
-    for (let attempt = 0; attempt < 5; attempt++) {
-      const code = randomCode();
-      const { error: insertError } = await supabase
-        .from("short_links")
-        .insert({ code, url: link });
-      if (!insertError) {
-        setShortLink(`${window.location.origin}/${code}`);
+    const attempts = custom ? [custom] : [randomCode(), randomCode(), randomCode()];
+    for (const code of attempts) {
+      const { data, error: rpcError } = await supabase.rpc("create_short_link", {
+        _code: code,
+        _url: link,
+      });
+      const row = Array.isArray(data) ? data[0] : null;
+      if (!rpcError && row) {
+        setShortLink(`${window.location.origin}/${row.code}`);
+        setEditToken(row.edit_token);
+        setAlias(row.code);
         setShortening(false);
         return;
       }
-      if (insertError.code !== "23505") break;
+      if (custom) {
+        setAliasError(
+          rpcError?.message?.includes("duplicate")
+            ? "Esse nome já está em uso. Escolha outro."
+            : "Não foi possível criar com esse nome. Tente outro.",
+        );
+        setShortening(false);
+        return;
+      }
     }
     setError("Não foi possível encurtar o link agora. Tente novamente.");
     setShortening(false);
+  }
+
+  async function rename() {
+    if (!editToken || editing) return;
+    const custom = alias.trim();
+    const problem = aliasProblem(custom);
+    if (problem) {
+      setAliasError(problem);
+      return;
+    }
+    setEditing(true);
+    setAliasError(null);
+    const { data, error: rpcError } = await supabase.rpc("rename_short_link", {
+      _token: editToken,
+      _new_code: custom,
+    });
+    if (rpcError || !data) {
+      setAliasError(
+        rpcError?.message?.includes("duplicate")
+          ? "Esse nome já está em uso. Escolha outro."
+          : "Não foi possível alterar o nome. Tente outro.",
+      );
+    } else {
+      setShortLink(`${window.location.origin}/${data}`);
+      setAliasError(null);
+    }
+    setEditing(false);
   }
 
   function reset() {
@@ -111,6 +171,9 @@ export function LinkGenerator() {
     setPhone("");
     setMessage("");
     setError(null);
+    setAlias("");
+    setEditToken(null);
+    setAliasError(null);
   }
 
   if (link) {
@@ -164,16 +227,62 @@ export function LinkGenerator() {
                 Abrir
               </a>
             </div>
+
+            <label htmlFor="alias-edit" className="mt-4 block text-sm font-medium text-card-foreground">
+              Nome personalizado
+            </label>
+            <div className="mt-1.5 flex items-center rounded-xl border border-input bg-background focus-within:border-primary">
+              <span className="pl-4 text-sm text-muted-foreground">/</span>
+              <input
+                id="alias-edit"
+                value={alias}
+                onChange={(e) => setAlias(e.target.value)}
+                className="w-full bg-transparent px-2 py-3 text-base text-foreground outline-none"
+              />
+            </div>
+            <button
+              onClick={rename}
+              disabled={editing}
+              className="mt-3 w-full rounded-xl border border-border bg-background px-4 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-accent disabled:opacity-60"
+            >
+              {editing ? "Salvando..." : "Salvar novo nome"}
+            </button>
+            {aliasError && (
+              <p className="mt-3 rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                {aliasError}
+              </p>
+            )}
           </div>
         ) : (
-          <button
-            onClick={shorten}
-            disabled={shortening}
-            className="mt-4 w-full rounded-xl border border-border bg-background px-4 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-accent disabled:opacity-60"
-          >
-            {shortening ? "Encurtando..." : "Encurtar link"}
-          </button>
+          <div className="mt-4 rounded-2xl border border-border p-4">
+            <label htmlFor="alias" className="text-sm font-medium text-card-foreground">
+              Nome personalizado <span className="text-muted-foreground">(opcional)</span>
+            </label>
+            <div className="mt-1.5 flex items-center rounded-xl border border-input bg-background focus-within:border-primary">
+              <span className="pl-4 text-sm text-muted-foreground">/</span>
+              <input
+                id="alias"
+                placeholder="ruan"
+                value={alias}
+                onChange={(e) => setAlias(e.target.value)}
+                className="w-full bg-transparent px-2 py-3 text-base text-foreground outline-none"
+              />
+            </div>
+            {aliasError && (
+              <p className="mt-3 rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                {aliasError}
+              </p>
+            )}
+            <button
+              onClick={shorten}
+              disabled={shortening}
+              className="mt-3 w-full rounded-xl border border-border bg-background px-4 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-accent disabled:opacity-60"
+            >
+              {shortening ? "Encurtando..." : "Encurtar link"}
+            </button>
+          </div>
         )}
+
 
         <div className="mt-6 flex flex-col items-center gap-3 rounded-2xl border border-border p-5">
           <QRCodeCanvas value={shortLink ?? link} size={168} includeMargin />
