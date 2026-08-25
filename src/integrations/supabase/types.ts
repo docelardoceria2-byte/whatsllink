@@ -19,6 +19,7 @@ export type Database = {
           clicks: number
           code: string
           created_at: string
+          edit_token: string
           id: string
           url: string
         }
@@ -26,6 +27,7 @@ export type Database = {
           clicks?: number
           code: string
           created_at?: string
+          edit_token?: string
           id?: string
           url: string
         }
@@ -33,6 +35,7 @@ export type Database = {
           clicks?: number
           code?: string
           created_at?: string
+          edit_token?: string
           id?: string
           url?: string
         }
@@ -43,6 +46,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_short_link: {
+        Args: { _code: string; _url: string }
+        Returns: {
+          code: string
+          edit_token: string
+        }[]
+      }
+      rename_short_link: {
+        Args: { _new_code: string; _token: string }
+        Returns: string
+      }
       resolve_short_link: {
         Args: { _code: string }
         Returns: {
