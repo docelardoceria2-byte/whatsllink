@@ -89,24 +89,80 @@ export function LinkGenerator() {
     }
   }
 
+  const ALIAS_RE = /^[a-zA-Z0-9_-]{3,32}$/;
+
+  function aliasProblem(value: string) {
+    if (!ALIAS_RE.test(value))
+      return "Use de 3 a 32 caracteres: letras, números, hífen ou _ (sem espaços ou acentos).";
+    return null;
+  }
+
   async function shorten() {
     if (!link || shortening) return;
+    const custom = alias.trim();
+    if (custom) {
+      const problem = aliasProblem(custom);
+      if (problem) {
+        setAliasError(problem);
+        return;
+      }
+    }
     setShortening(true);
+    setAliasError(null);
     setError(null);
-    for (let attempt = 0; attempt < 5; attempt++) {
-      const code = randomCode();
-      const { error: insertError } = await supabase
-        .from("short_links")
-        .insert({ code, url: link });
-      if (!insertError) {
-        setShortLink(`${window.location.origin}/${code}`);
+    const attempts = custom ? [custom] : [randomCode(), randomCode(), randomCode()];
+    for (const code of attempts) {
+      const { data, error: rpcError } = await supabase.rpc("create_short_link", {
+        _code: code,
+        _url: link,
+      });
+      const row = Array.isArray(data) ? data[0] : null;
+      if (!rpcError && row) {
+        setShortLink(`${window.location.origin}/${row.code}`);
+        setEditToken(row.edit_token);
+        setAlias(row.code);
         setShortening(false);
         return;
       }
-      if (insertError.code !== "23505") break;
+      if (custom) {
+        setAliasError(
+          rpcError?.message?.includes("duplicate")
+            ? "Esse nome já está em uso. Escolha outro."
+            : "Não foi possível criar com esse nome. Tente outro.",
+        );
+        setShortening(false);
+        return;
+      }
     }
     setError("Não foi possível encurtar o link agora. Tente novamente.");
     setShortening(false);
+  }
+
+  async function rename() {
+    if (!editToken || editing) return;
+    const custom = alias.trim();
+    const problem = aliasProblem(custom);
+    if (problem) {
+      setAliasError(problem);
+      return;
+    }
+    setEditing(true);
+    setAliasError(null);
+    const { data, error: rpcError } = await supabase.rpc("rename_short_link", {
+      _token: editToken,
+      _new_code: custom,
+    });
+    if (rpcError || !data) {
+      setAliasError(
+        rpcError?.message?.includes("duplicate")
+          ? "Esse nome já está em uso. Escolha outro."
+          : "Não foi possível alterar o nome. Tente outro.",
+      );
+    } else {
+      setShortLink(`${window.location.origin}/${data}`);
+      setAliasError(null);
+    }
+    setEditing(false);
   }
 
   function reset() {
@@ -115,6 +171,9 @@ export function LinkGenerator() {
     setPhone("");
     setMessage("");
     setError(null);
+    setAlias("");
+    setEditToken(null);
+    setAliasError(null);
   }
 
   if (link) {
