@@ -74,8 +74,40 @@ export function LinkGenerator() {
     }
   }
 
+  async function copyShort() {
+    if (!shortLink) return;
+    try {
+      await navigator.clipboard.writeText(shortLink);
+      setShortCopied(true);
+      setTimeout(() => setShortCopied(false), 2000);
+    } catch {
+      setError("Não foi possível copiar. Copie o link manualmente.");
+    }
+  }
+
+  async function shorten() {
+    if (!link || shortening) return;
+    setShortening(true);
+    setError(null);
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const code = randomCode();
+      const { error: insertError } = await supabase
+        .from("short_links")
+        .insert({ code, url: link });
+      if (!insertError) {
+        setShortLink(`${window.location.origin}/${code}`);
+        setShortening(false);
+        return;
+      }
+      if (insertError.code !== "23505") break;
+    }
+    setError("Não foi possível encurtar o link agora. Tente novamente.");
+    setShortening(false);
+  }
+
   function reset() {
     setLink(null);
+    setShortLink(null);
     setPhone("");
     setMessage("");
     setError(null);
