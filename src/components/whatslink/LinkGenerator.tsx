@@ -1,5 +1,15 @@
 import { useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
+import { supabase } from "@/integrations/supabase/client";
+
+const ALPHABET = "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+function randomCode() {
+  return Array.from(
+    { length: 6 },
+    () => ALPHABET[Math.floor(Math.random() * ALPHABET.length)],
+  ).join("");
+}
 
 type Country = { code: string; label: string; flag: string; digits: number[] };
 
