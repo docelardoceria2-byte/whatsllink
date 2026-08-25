@@ -227,16 +227,62 @@ export function LinkGenerator() {
                 Abrir
               </a>
             </div>
+
+            <label htmlFor="alias-edit" className="mt-4 block text-sm font-medium text-card-foreground">
+              Nome personalizado
+            </label>
+            <div className="mt-1.5 flex items-center rounded-xl border border-input bg-background focus-within:border-primary">
+              <span className="pl-4 text-sm text-muted-foreground">/</span>
+              <input
+                id="alias-edit"
+                value={alias}
+                onChange={(e) => setAlias(e.target.value)}
+                className="w-full bg-transparent px-2 py-3 text-base text-foreground outline-none"
+              />
+            </div>
+            <button
+              onClick={rename}
+              disabled={editing}
+              className="mt-3 w-full rounded-xl border border-border bg-background px-4 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-accent disabled:opacity-60"
+            >
+              {editing ? "Salvando..." : "Salvar novo nome"}
+            </button>
+            {aliasError && (
+              <p className="mt-3 rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                {aliasError}
+              </p>
+            )}
           </div>
         ) : (
-          <button
-            onClick={shorten}
-            disabled={shortening}
-            className="mt-4 w-full rounded-xl border border-border bg-background px-4 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-accent disabled:opacity-60"
-          >
-            {shortening ? "Encurtando..." : "Encurtar link"}
-          </button>
+          <div className="mt-4 rounded-2xl border border-border p-4">
+            <label htmlFor="alias" className="text-sm font-medium text-card-foreground">
+              Nome personalizado <span className="text-muted-foreground">(opcional)</span>
+            </label>
+            <div className="mt-1.5 flex items-center rounded-xl border border-input bg-background focus-within:border-primary">
+              <span className="pl-4 text-sm text-muted-foreground">/</span>
+              <input
+                id="alias"
+                placeholder="ruan"
+                value={alias}
+                onChange={(e) => setAlias(e.target.value)}
+                className="w-full bg-transparent px-2 py-3 text-base text-foreground outline-none"
+              />
+            </div>
+            {aliasError && (
+              <p className="mt-3 rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                {aliasError}
+              </p>
+            )}
+            <button
+              onClick={shorten}
+              disabled={shortening}
+              className="mt-3 w-full rounded-xl border border-border bg-background px-4 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-accent disabled:opacity-60"
+            >
+              {shortening ? "Encurtando..." : "Encurtar link"}
+            </button>
+          </div>
         )}
+
 
         <div className="mt-6 flex flex-col items-center gap-3 rounded-2xl border border-border p-5">
           <QRCodeCanvas value={shortLink ?? link} size={168} includeMargin />
