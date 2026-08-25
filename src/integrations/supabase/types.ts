@@ -14,13 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      short_links: {
+        Row: {
+          clicks: number
+          code: string
+          created_at: string
+          id: string
+          url: string
+        }
+        Insert: {
+          clicks?: number
+          code: string
+          created_at?: string
+          id?: string
+          url: string
+        }
+        Update: {
+          clicks?: number
+          code?: string
+          created_at?: string
+          id?: string
+          url?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      resolve_short_link: {
+        Args: { _code: string }
+        Returns: {
+          clicks: number
+          url: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
