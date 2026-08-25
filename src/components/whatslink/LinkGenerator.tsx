@@ -142,8 +142,41 @@ export function LinkGenerator() {
           </a>
         </div>
 
+        {shortLink ? (
+          <div className="mt-4 rounded-2xl border border-border p-4">
+            <p className="text-sm font-medium text-card-foreground">Link curto</p>
+            <div className="mt-2 break-all rounded-xl bg-muted px-4 py-3 font-mono text-sm text-foreground">
+              {shortLink}
+            </div>
+            <div className="mt-3 grid gap-3 sm:grid-cols-2">
+              <button
+                onClick={copyShort}
+                className="rounded-xl border border-border bg-background px-4 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-accent"
+              >
+                {shortCopied ? "Copiado!" : "Copiar"}
+              </button>
+              <a
+                href={shortLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-xl bg-primary px-4 py-3 text-center text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+              >
+                Abrir
+              </a>
+            </div>
+          </div>
+        ) : (
+          <button
+            onClick={shorten}
+            disabled={shortening}
+            className="mt-4 w-full rounded-xl border border-border bg-background px-4 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-accent disabled:opacity-60"
+          >
+            {shortening ? "Encurtando..." : "Encurtar link"}
+          </button>
+        )}
+
         <div className="mt-6 flex flex-col items-center gap-3 rounded-2xl border border-border p-5">
-          <QRCodeCanvas value={link} size={168} includeMargin />
+          <QRCodeCanvas value={shortLink ?? link} size={168} includeMargin />
           <p className="text-xs text-muted-foreground">Aponte a câmera para abrir a conversa</p>
         </div>
 
