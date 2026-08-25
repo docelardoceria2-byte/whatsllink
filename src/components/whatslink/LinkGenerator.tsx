@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 
-const COUNTRIES = [
+type Country = { code: string; label: string; flag: string; digits: number[] };
+
+const COUNTRIES: Country[] = [
   { code: "55", label: "Brasil (+55)", flag: "🇧🇷", digits: [10, 11] },
   { code: "351", label: "Portugal (+351)", flag: "🇵🇹", digits: [9] },
   { code: "1", label: "EUA / Canadá (+1)", flag: "🇺🇸", digits: [10] },
@@ -20,7 +22,7 @@ function formatBR(digits: string) {
 }
 
 export function LinkGenerator() {
-  const [country, setCountry] = useState(COUNTRIES[0]);
+  const [country, setCountry] = useState<Country>(COUNTRIES[0]!);
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -123,7 +125,7 @@ export function LinkGenerator() {
             id="country"
             value={country.code}
             onChange={(e) =>
-              setCountry(COUNTRIES.find((c) => c.code === e.target.value) ?? COUNTRIES[0])
+              setCountry(COUNTRIES.find((c) => c.code === e.target.value) ?? COUNTRIES[0]!)
             }
             className="mt-1.5 w-full rounded-xl border border-input bg-background px-4 py-3 text-base text-foreground outline-none focus:border-primary"
           >
