@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { LinkGenerator } from "@/components/whatslink/LinkGenerator";
 
 export const Route = createFileRoute("/")({
@@ -68,8 +68,15 @@ function Index() {
             Gere um link personalizado para compartilhar seu WhatsApp com clientes, amigos e nas
             redes sociais.
           </p>
+          <Link
+            to="/planos"
+            className="mt-5 inline-block rounded-full bg-primary-foreground/15 px-4 py-2 text-sm font-semibold hover:bg-primary-foreground/25"
+          >
+            Ver planos
+          </Link>
         </div>
       </section>
+
 
       <div className="mx-auto -mt-12 max-w-xl px-5">
         <LinkGenerator />

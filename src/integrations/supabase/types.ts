@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          plan: Database["public"]["Enums"]["plan_tier"]
+          plan_updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id: string
+          plan?: Database["public"]["Enums"]["plan_tier"]
+          plan_updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          plan?: Database["public"]["Enums"]["plan_tier"]
+          plan_updated_at?: string
+        }
+        Relationships: []
+      }
       short_links: {
         Row: {
           clicks: number
@@ -66,7 +90,7 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      plan_tier: "free" | "pro"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -193,6 +217,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      plan_tier: ["free", "pro"],
+    },
   },
 } as const
