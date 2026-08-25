@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { LinkGenerator } from "@/components/whatslink/LinkGenerator";
 
 export const Route = createFileRoute("/")({
