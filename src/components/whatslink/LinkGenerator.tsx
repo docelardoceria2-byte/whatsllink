@@ -1,5 +1,15 @@
 import { useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
+import { supabase } from "@/integrations/supabase/client";
+
+const ALPHABET = "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+function randomCode() {
+  return Array.from(
+    { length: 6 },
+    () => ALPHABET[Math.floor(Math.random() * ALPHABET.length)],
+  ).join("");
+}
 
 type Country = { code: string; label: string; flag: string; digits: number[] };
 
@@ -28,6 +38,10 @@ export function LinkGenerator() {
   const [error, setError] = useState<string | null>(null);
   const [link, setLink] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [shortLink, setShortLink] = useState<string | null>(null);
+  const [shortCopied, setShortCopied] = useState(false);
+  const [shortening, setShortening] = useState(false);
+
 
   const digits = phone.replace(/\D/g, "");
 
@@ -60,8 +74,40 @@ export function LinkGenerator() {
     }
   }
 
+  async function copyShort() {
+    if (!shortLink) return;
+    try {
+      await navigator.clipboard.writeText(shortLink);
+      setShortCopied(true);
+      setTimeout(() => setShortCopied(false), 2000);
+    } catch {
+      setError("Não foi possível copiar. Copie o link manualmente.");
+    }
+  }
+
+  async function shorten() {
+    if (!link || shortening) return;
+    setShortening(true);
+    setError(null);
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const code = randomCode();
+      const { error: insertError } = await supabase
+        .from("short_links")
+        .insert({ code, url: link });
+      if (!insertError) {
+        setShortLink(`${window.location.origin}/${code}`);
+        setShortening(false);
+        return;
+      }
+      if (insertError.code !== "23505") break;
+    }
+    setError("Não foi possível encurtar o link agora. Tente novamente.");
+    setShortening(false);
+  }
+
   function reset() {
     setLink(null);
+    setShortLink(null);
     setPhone("");
     setMessage("");
     setError(null);
@@ -96,8 +142,41 @@ export function LinkGenerator() {
           </a>
         </div>
 
+        {shortLink ? (
+          <div className="mt-4 rounded-2xl border border-border p-4">
+            <p className="text-sm font-medium text-card-foreground">Link curto</p>
+            <div className="mt-2 break-all rounded-xl bg-muted px-4 py-3 font-mono text-sm text-foreground">
+              {shortLink}
+            </div>
+            <div className="mt-3 grid gap-3 sm:grid-cols-2">
+              <button
+                onClick={copyShort}
+                className="rounded-xl border border-border bg-background px-4 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-accent"
+              >
+                {shortCopied ? "Copiado!" : "Copiar"}
+              </button>
+              <a
+                href={shortLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-xl bg-primary px-4 py-3 text-center text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+              >
+                Abrir
+              </a>
+            </div>
+          </div>
+        ) : (
+          <button
+            onClick={shorten}
+            disabled={shortening}
+            className="mt-4 w-full rounded-xl border border-border bg-background px-4 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-accent disabled:opacity-60"
+          >
+            {shortening ? "Encurtando..." : "Encurtar link"}
+          </button>
+        )}
+
         <div className="mt-6 flex flex-col items-center gap-3 rounded-2xl border border-border p-5">
-          <QRCodeCanvas value={link} size={168} includeMargin />
+          <QRCodeCanvas value={shortLink ?? link} size={168} includeMargin />
           <p className="text-xs text-muted-foreground">Aponte a câmera para abrir a conversa</p>
         </div>
 
