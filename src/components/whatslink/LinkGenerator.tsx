@@ -41,6 +41,10 @@ export function LinkGenerator() {
   const [shortLink, setShortLink] = useState<string | null>(null);
   const [shortCopied, setShortCopied] = useState(false);
   const [shortening, setShortening] = useState(false);
+  const [alias, setAlias] = useState("");
+  const [editToken, setEditToken] = useState<string | null>(null);
+  const [editing, setEditing] = useState(false);
+  const [aliasError, setAliasError] = useState<string | null>(null);
 
 
   const digits = phone.replace(/\D/g, "");
