@@ -68,12 +68,20 @@ function Index() {
             Gere um link personalizado para compartilhar seu WhatsApp com clientes, amigos e nas
             redes sociais.
           </p>
-          <Link
-            to="/planos"
-            className="mt-5 inline-block rounded-full bg-primary-foreground/15 px-4 py-2 text-sm font-semibold hover:bg-primary-foreground/25"
-          >
-            Ver planos
-          </Link>
+          <div className="mt-5 flex flex-wrap justify-center gap-2">
+            <Link
+              to="/planos"
+              className="inline-block rounded-full bg-primary-foreground/15 px-4 py-2 text-sm font-semibold hover:bg-primary-foreground/25"
+            >
+              Ver planos
+            </Link>
+            <Link
+              to="/meus-links"
+              className="inline-block rounded-full bg-primary-foreground/15 px-4 py-2 text-sm font-semibold hover:bg-primary-foreground/25"
+            >
+              Meus Links
+            </Link>
+          </div>
         </div>
       </section>
 

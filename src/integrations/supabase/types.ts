@@ -46,6 +46,7 @@ export type Database = {
           edit_token: string
           id: string
           url: string
+          user_id: string | null
         }
         Insert: {
           clicks?: number
@@ -54,6 +55,7 @@ export type Database = {
           edit_token?: string
           id?: string
           url: string
+          user_id?: string | null
         }
         Update: {
           clicks?: number
@@ -62,6 +64,7 @@ export type Database = {
           edit_token?: string
           id?: string
           url?: string
+          user_id?: string | null
         }
         Relationships: []
       }
