@@ -14,6 +14,32 @@ export type Database = {
   }
   public: {
     Tables: {
+      link_click_days: {
+        Row: {
+          clicks: number
+          day: string
+          link_id: string
+        }
+        Insert: {
+          clicks?: number
+          day?: string
+          link_id: string
+        }
+        Update: {
+          clicks?: number
+          day?: string
+          link_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "link_click_days_link_id_fkey"
+            columns: ["link_id"]
+            isOneToOne: false
+            referencedRelation: "short_links"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -90,6 +116,10 @@ export type Database = {
           clicks: number
           url: string
         }[]
+      }
+      update_short_link: {
+        Args: { _code: string; _id: string; _url: string }
+        Returns: string
       }
     }
     Enums: {
