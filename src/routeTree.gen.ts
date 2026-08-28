@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CodeRouteImport } from './routes/$code'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as MeusLinksRouteImport } from './routes/meus-links'
 import { Route as PlanosRouteImport } from './routes/planos'
@@ -24,6 +25,11 @@ const IndexRoute = IndexRouteImport.update({
 const CodeRoute = CodeRouteImport.update({
   id: '/$code',
   path: '/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -50,6 +56,7 @@ const LinkCodeRoute = LinkCodeRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$code': typeof CodeRoute
+  '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/meus-links': typeof MeusLinksRoute
   '/planos': typeof PlanosRoute
@@ -58,6 +65,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$code': typeof CodeRoute
+  '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/meus-links': typeof MeusLinksRoute
   '/planos': typeof PlanosRoute
@@ -67,6 +75,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/$code': typeof CodeRoute
+  '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/meus-links': typeof MeusLinksRoute
   '/planos': typeof PlanosRoute
@@ -75,13 +84,27 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/$code' | '/auth' | '/meus-links' | '/planos' | '/link/$code'
+    | '/'
+    | '/$code'
+    | '/admin'
+    | '/auth'
+    | '/meus-links'
+    | '/planos'
+    | '/link/$code'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$code' | '/auth' | '/meus-links' | '/planos' | '/link/$code'
+  to:
+    | '/'
+    | '/$code'
+    | '/admin'
+    | '/auth'
+    | '/meus-links'
+    | '/planos'
+    | '/link/$code'
   id:
     | '__root__'
     | '/'
     | '/$code'
+    | '/admin'
     | '/auth'
     | '/meus-links'
     | '/planos'
@@ -91,6 +114,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CodeRoute: typeof CodeRoute
+  AdminRoute: typeof AdminRoute
   AuthRoute: typeof AuthRoute
   MeusLinksRoute: typeof MeusLinksRoute
   PlanosRoute: typeof PlanosRoute
@@ -111,6 +135,13 @@ declare module '@tanstack/react-router' {
       path: '/$code'
       fullPath: '/$code'
       preLoaderRoute: typeof CodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -147,6 +178,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CodeRoute: CodeRoute,
+  AdminRoute: AdminRoute,
   AuthRoute: AuthRoute,
   MeusLinksRoute: MeusLinksRoute,
   PlanosRoute: PlanosRoute,
