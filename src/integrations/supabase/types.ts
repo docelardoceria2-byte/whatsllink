@@ -45,6 +45,7 @@ export type Database = {
           created_at: string
           email: string | null
           id: string
+          is_active: boolean
           plan: Database["public"]["Enums"]["plan_tier"]
           plan_updated_at: string
         }
@@ -52,6 +53,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           id: string
+          is_active?: boolean
           plan?: Database["public"]["Enums"]["plan_tier"]
           plan_updated_at?: string
         }
@@ -59,6 +61,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: string
+          is_active?: boolean
           plan?: Database["public"]["Enums"]["plan_tier"]
           plan_updated_at?: string
         }
@@ -94,6 +97,27 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -105,6 +129,13 @@ export type Database = {
           code: string
           edit_token: string
         }[]
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
       }
       rename_short_link: {
         Args: { _new_code: string; _token: string }
@@ -123,6 +154,7 @@ export type Database = {
       }
     }
     Enums: {
+      app_role: "admin" | "user"
       plan_tier: "free" | "pro"
     }
     CompositeTypes: {
@@ -251,6 +283,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      app_role: ["admin", "user"],
       plan_tier: ["free", "pro"],
     },
   },
