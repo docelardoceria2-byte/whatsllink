@@ -205,6 +205,7 @@ function MeusLinksPage() {
                 <p className="mt-1 text-2xl font-bold text-card-foreground">
                   {rows ? totalClicks : "—"}
                 </p>
+              </div>
             </div>
 
             {isAdmin && (
@@ -215,7 +216,6 @@ function MeusLinksPage() {
               </div>
             )}
 
-            </div>
 
             {topLink && topLink.clicks > 0 && (
               <div className="mt-3 rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-card)]">
