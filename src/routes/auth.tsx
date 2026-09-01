@@ -67,13 +67,26 @@ function AuthPage() {
 
         <button
           type="button"
-          onClick={() =>
-            lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin })
-          }
-          className="mt-5 w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+          disabled={busy}
+          onClick={async () => {
+            setBusy(true);
+            setMsg(null);
+            const result = await lovable.auth.signInWithOAuth("google", {
+              redirect_uri: `${window.location.origin}/auth`,
+            });
+            if (result.error) {
+              setBusy(false);
+              setMsg("Não foi possível entrar com o Google. Tente novamente.");
+              return;
+            }
+            if (result.redirected) return;
+            navigate({ to: "/planos" });
+          }}
+          className="mt-5 w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-accent disabled:opacity-60"
         >
           Continuar com Google
         </button>
+
 
         <div className="my-4 text-center text-xs text-muted-foreground">ou</div>
 
