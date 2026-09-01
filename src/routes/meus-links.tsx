@@ -56,6 +56,28 @@ function MeusLinksPage() {
   const [form, setForm] = useState({ code: "", phone: "", message: "" });
   const [formError, setFormError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    if (!user) {
+      setIsAdmin(false);
+      return;
+    }
+    let active = true;
+    supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", user.id)
+      .eq("role", "admin")
+      .maybeSingle()
+      .then(({ data }) => {
+        if (active) setIsAdmin(!!data);
+      });
+    return () => {
+      active = false;
+    };
+  }, [user]);
+
 
   useEffect(() => {
     if (!user) {
