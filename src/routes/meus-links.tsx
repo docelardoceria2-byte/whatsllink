@@ -205,7 +205,16 @@ function MeusLinksPage() {
                 <p className="mt-1 text-2xl font-bold text-card-foreground">
                   {rows ? totalClicks : "—"}
                 </p>
+            </div>
+
+            {isAdmin && (
+              <div className="mt-3 text-right">
+                <Link to="/admin" className="text-sm font-semibold text-primary underline">
+                  Abrir painel de administração
+                </Link>
               </div>
+            )}
+
             </div>
 
             {topLink && topLink.clicks > 0 && (
