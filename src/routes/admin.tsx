@@ -133,11 +133,12 @@ function AdminPage() {
             Esta página é exclusiva para administradores do WhatsLink.
           </p>
           <Link
-            to={user ? "/meus-links" : "/auth"}
+            to={user ? "/meus-links" : "/admin-login"}
             className="mt-4 inline-block rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
           >
-            {user ? "Ir para Meus Links" : "Entrar"}
+            {user ? "Ir para Meus Links" : "Entrar como administrador"}
           </Link>
+
         </div>
       </main>
     );

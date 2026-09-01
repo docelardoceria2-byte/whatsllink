@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CodeRouteImport } from './routes/$code'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AdminLoginRouteImport } from './routes/admin-login'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as MeusLinksRouteImport } from './routes/meus-links'
 import { Route as PlanosRouteImport } from './routes/planos'
@@ -30,6 +31,11 @@ const CodeRoute = CodeRouteImport.update({
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/admin-login',
+  path: '/admin-login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -57,6 +63,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$code': typeof CodeRoute
   '/admin': typeof AdminRoute
+  '/admin-login': typeof AdminLoginRoute
   '/auth': typeof AuthRoute
   '/meus-links': typeof MeusLinksRoute
   '/planos': typeof PlanosRoute
@@ -66,6 +73,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$code': typeof CodeRoute
   '/admin': typeof AdminRoute
+  '/admin-login': typeof AdminLoginRoute
   '/auth': typeof AuthRoute
   '/meus-links': typeof MeusLinksRoute
   '/planos': typeof PlanosRoute
@@ -76,6 +84,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/$code': typeof CodeRoute
   '/admin': typeof AdminRoute
+  '/admin-login': typeof AdminLoginRoute
   '/auth': typeof AuthRoute
   '/meus-links': typeof MeusLinksRoute
   '/planos': typeof PlanosRoute
@@ -87,6 +96,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$code'
     | '/admin'
+    | '/admin-login'
     | '/auth'
     | '/meus-links'
     | '/planos'
@@ -96,6 +106,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$code'
     | '/admin'
+    | '/admin-login'
     | '/auth'
     | '/meus-links'
     | '/planos'
@@ -105,6 +116,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$code'
     | '/admin'
+    | '/admin-login'
     | '/auth'
     | '/meus-links'
     | '/planos'
@@ -115,6 +127,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CodeRoute: typeof CodeRoute
   AdminRoute: typeof AdminRoute
+  AdminLoginRoute: typeof AdminLoginRoute
   AuthRoute: typeof AuthRoute
   MeusLinksRoute: typeof MeusLinksRoute
   PlanosRoute: typeof PlanosRoute
@@ -142,6 +155,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin-login': {
+      id: '/admin-login'
+      path: '/admin-login'
+      fullPath: '/admin-login'
+      preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -179,6 +199,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CodeRoute: CodeRoute,
   AdminRoute: AdminRoute,
+  AdminLoginRoute: AdminLoginRoute,
   AuthRoute: AuthRoute,
   MeusLinksRoute: MeusLinksRoute,
   PlanosRoute: PlanosRoute,
