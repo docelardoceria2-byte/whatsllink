@@ -56,6 +56,28 @@ function MeusLinksPage() {
   const [form, setForm] = useState({ code: "", phone: "", message: "" });
   const [formError, setFormError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    if (!user) {
+      setIsAdmin(false);
+      return;
+    }
+    let active = true;
+    supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", user.id)
+      .eq("role", "admin")
+      .maybeSingle()
+      .then(({ data }) => {
+        if (active) setIsAdmin(!!data);
+      });
+    return () => {
+      active = false;
+    };
+  }, [user]);
+
 
   useEffect(() => {
     if (!user) {
@@ -185,6 +207,15 @@ function MeusLinksPage() {
                 </p>
               </div>
             </div>
+
+            {isAdmin && (
+              <div className="mt-3 text-right">
+                <Link to="/admin" className="text-sm font-semibold text-primary underline">
+                  Abrir painel de administração
+                </Link>
+              </div>
+            )}
+
 
             {topLink && topLink.clicks > 0 && (
               <div className="mt-3 rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-card)]">
