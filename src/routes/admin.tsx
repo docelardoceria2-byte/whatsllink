@@ -240,7 +240,14 @@ function AdminPage() {
                         {fmtDate(u.createdAt)}
                       </p>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        disabled={busy}
+                        onClick={() => changePlan(u.id, u.plan === "pro" ? "free" : "pro")}
+                        className="rounded-xl border border-primary px-3 py-1.5 text-xs text-primary hover:bg-primary/10 disabled:opacity-60"
+                      >
+                        {u.plan === "pro" ? "Voltar para Grátis" : "Tornar Pro"}
+                      </button>
                       <button
                         disabled={busy}
                         onClick={() => toggle(u.id, !u.isActive)}
