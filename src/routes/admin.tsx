@@ -6,6 +6,7 @@ import {
   adminDashboard,
   adminDeleteUser,
   adminSetUserActive,
+  adminSetUserPlan,
 } from "@/lib/admin.functions";
 
 export const Route = createFileRoute("/admin")({
@@ -58,6 +59,7 @@ function AdminPage() {
   const load = useServerFn(adminDashboard);
   const setActive = useServerFn(adminSetUserActive);
   const removeUser = useServerFn(adminDeleteUser);
+  const setPlan = useServerFn(adminSetUserPlan);
 
   const [data, setData] = useState<Data | null>(null);
   const [denied, setDenied] = useState(false);
@@ -105,6 +107,17 @@ function AdminPage() {
     setBusy(true);
     await setActive({ data: { userId, active } });
     await refresh();
+    setBusy(false);
+  }
+
+  async function changePlan(userId: string, plan: "free" | "pro") {
+    setBusy(true);
+    try {
+      await setPlan({ data: { userId, plan } });
+      await refresh();
+    } catch {
+      /* ignore */
+    }
     setBusy(false);
   }
 
@@ -227,7 +240,14 @@ function AdminPage() {
                         {fmtDate(u.createdAt)}
                       </p>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        disabled={busy}
+                        onClick={() => changePlan(u.id, u.plan === "pro" ? "free" : "pro")}
+                        className="rounded-xl border border-primary px-3 py-1.5 text-xs text-primary hover:bg-primary/10 disabled:opacity-60"
+                      >
+                        {u.plan === "pro" ? "Voltar para Grátis" : "Tornar Pro"}
+                      </button>
                       <button
                         disabled={busy}
                         onClick={() => toggle(u.id, !u.isActive)}
@@ -317,6 +337,7 @@ function AdminPage() {
                       <th className="px-4 py-3">Usuário</th>
                       <th className="px-4 py-3">Plano</th>
                       <th className="px-4 py-3">Status</th>
+                      <th className="px-4 py-3">Alterar</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -326,6 +347,17 @@ function AdminPage() {
                         <td className="px-4 py-3 uppercase text-muted-foreground">{u.plan}</td>
                         <td className="px-4 py-3 text-muted-foreground">
                           {u.plan === "pro" ? "Assinatura ativa" : "Sem assinatura"}
+                        </td>
+                        <td className="px-4 py-3">
+                          <select
+                            disabled={busy}
+                            value={u.plan}
+                            onChange={(e) => changePlan(u.id, e.target.value as "free" | "pro")}
+                            className="rounded-lg border border-border bg-background px-2 py-1 text-xs text-foreground disabled:opacity-60"
+                          >
+                            <option value="free">Grátis</option>
+                            <option value="pro">Pro</option>
+                          </select>
                         </td>
                       </tr>
                     ))}

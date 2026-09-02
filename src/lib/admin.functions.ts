@@ -116,6 +116,22 @@ export const adminSetUserActive = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const adminSetUserPlan = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { userId: string; plan: "free" | "pro" }) => {
+    if (data.plan !== "free" && data.plan !== "pro") throw new Error("invalid_plan");
+    return data;
+  })
+  .handler(async ({ context, data }) => {
+    const db = await assertAdmin(context);
+    const { error } = await db
+      .from("profiles")
+      .update({ plan: data.plan, plan_updated_at: new Date().toISOString() })
+      .eq("id", data.userId);
+    if (error) throw new Response("Falha ao atualizar plano", { status: 400 });
+    return { ok: true };
+  });
+
 export const adminDeleteUser = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: { userId: string }) => data)
