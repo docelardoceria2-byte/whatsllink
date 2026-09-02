@@ -6,6 +6,7 @@ import {
   adminDashboard,
   adminDeleteUser,
   adminSetUserActive,
+  adminSetUserPlan,
 } from "@/lib/admin.functions";
 
 export const Route = createFileRoute("/admin")({
