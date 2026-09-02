@@ -59,6 +59,7 @@ function AdminPage() {
   const load = useServerFn(adminDashboard);
   const setActive = useServerFn(adminSetUserActive);
   const removeUser = useServerFn(adminDeleteUser);
+  const setPlan = useServerFn(adminSetUserPlan);
 
   const [data, setData] = useState<Data | null>(null);
   const [denied, setDenied] = useState(false);
