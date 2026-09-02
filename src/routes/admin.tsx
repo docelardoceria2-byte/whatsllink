@@ -110,6 +110,17 @@ function AdminPage() {
     setBusy(false);
   }
 
+  async function changePlan(userId: string, plan: "free" | "pro") {
+    setBusy(true);
+    try {
+      await setPlan({ data: { userId, plan } });
+      await refresh();
+    } catch {
+      /* ignore */
+    }
+    setBusy(false);
+  }
+
   async function destroy(userId: string, email: string | null) {
     if (!confirm(`Excluir definitivamente ${email ?? userId} e todos os seus links?`)) return;
     setBusy(true);
