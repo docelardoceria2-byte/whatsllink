@@ -337,6 +337,7 @@ function AdminPage() {
                       <th className="px-4 py-3">Usuário</th>
                       <th className="px-4 py-3">Plano</th>
                       <th className="px-4 py-3">Status</th>
+                      <th className="px-4 py-3">Alterar</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -346,6 +347,17 @@ function AdminPage() {
                         <td className="px-4 py-3 uppercase text-muted-foreground">{u.plan}</td>
                         <td className="px-4 py-3 text-muted-foreground">
                           {u.plan === "pro" ? "Assinatura ativa" : "Sem assinatura"}
+                        </td>
+                        <td className="px-4 py-3">
+                          <select
+                            disabled={busy}
+                            value={u.plan}
+                            onChange={(e) => changePlan(u.id, e.target.value as "free" | "pro")}
+                            className="rounded-lg border border-border bg-background px-2 py-1 text-xs text-foreground disabled:opacity-60"
+                          >
+                            <option value="free">Grátis</option>
+                            <option value="pro">Pro</option>
+                          </select>
                         </td>
                       </tr>
                     ))}
