@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { LinkGenerator } from "@/components/whatslink/LinkGenerator";
+import whatsLinkLogo from "@/assets/whatslink-logo.png.asset.json";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -58,9 +59,11 @@ function Index() {
     <main className="min-h-screen bg-background">
       <section className="bg-[image:var(--gradient-hero)] px-5 pb-20 pt-14 text-primary-foreground sm:pt-20">
         <div className="mx-auto max-w-2xl text-center">
-          <span className="inline-block rounded-full bg-primary-foreground/15 px-4 py-1.5 text-xs font-semibold tracking-wide">
-            WhatsLink
-          </span>
+          <img
+            src={whatsLinkLogo.url}
+            alt="WhatsLink"
+            className="mx-auto h-24 w-24 rounded-2xl object-cover shadow-[var(--shadow-soft)] sm:h-28 sm:w-28"
+          />
           <h1 className="mt-5 text-3xl font-bold leading-tight sm:text-5xl">
             Crie seu link do WhatsApp em segundos
           </h1>
