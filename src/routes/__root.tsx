@@ -13,6 +13,19 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
 function NotFoundComponent() {
+  // Se a URL trouxer dados de login (Google/e-mail), leva o usuário para a tela de acesso
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const { pathname, search, hash } = window.location;
+    const hasAuthPayload =
+      /(access_token|refresh_token|provider_token|[?&#]code=|error_description)/.test(
+        search + hash,
+      );
+    if (hasAuthPayload || pathname.startsWith("/auth")) {
+      window.location.replace(`/auth${hash || ""}`);
+    }
+  }, []);
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
