@@ -1,4 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/$code")({
@@ -21,6 +22,15 @@ export const Route = createFileRoute("/$code")({
 });
 
 function ShortLinkPage() {
+  // Retorno de login (Google) nunca deve cair aqui
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const { search, hash } = window.location;
+    if (/(access_token|refresh_token|provider_token|[?&#]code=|error_description)/.test(search + hash)) {
+      window.location.replace(`/auth${hash || ""}`);
+    }
+  }, []);
+
   return (
     <main className="flex min-h-screen items-center justify-center bg-background px-5 text-center">
       <div>
