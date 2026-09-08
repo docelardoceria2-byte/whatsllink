@@ -12,3 +12,10 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /admin-login
+Disallow: /auth
+Disallow: /meus-links
+Disallow: /link/
+
+Sitemap: https://whatslink.site/sitemap.xml
