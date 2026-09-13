@@ -21,8 +21,10 @@ function NotFoundComponent() {
       /(access_token|refresh_token|provider_token|[?&#]code=|error_description)/.test(
         search + hash,
       );
-    if (hasAuthPayload || pathname.startsWith("/auth")) {
-      window.location.replace(`/auth${hash || ""}`);
+    if (hasAuthPayload) {
+      window.location.replace(`/auth/callback${search || ""}${hash || ""}`);
+    } else if (pathname.startsWith("/auth")) {
+      window.location.replace("/auth");
     }
   }, []);
 

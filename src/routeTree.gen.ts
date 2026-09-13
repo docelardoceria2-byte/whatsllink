@@ -16,6 +16,7 @@ import { Route as AdminLoginRouteImport } from './routes/admin-login'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as MeusLinksRouteImport } from './routes/meus-links'
 import { Route as PlanosRouteImport } from './routes/planos'
+import { Route as AuthCallbackRouteImport } from './routes/auth_.callback'
 import { Route as LinkCodeRouteImport } from './routes/link.$code'
 
 const IndexRoute = IndexRouteImport.update({
@@ -53,6 +54,11 @@ const PlanosRoute = PlanosRouteImport.update({
   path: '/planos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/auth_/callback',
+  path: '/auth/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LinkCodeRoute = LinkCodeRouteImport.update({
   id: '/link/$code',
   path: '/link/$code',
@@ -67,6 +73,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/meus-links': typeof MeusLinksRoute
   '/planos': typeof PlanosRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/link/$code': typeof LinkCodeRoute
 }
 export interface FileRoutesByTo {
@@ -77,6 +84,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/meus-links': typeof MeusLinksRoute
   '/planos': typeof PlanosRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/link/$code': typeof LinkCodeRoute
 }
 export interface FileRoutesById {
@@ -88,6 +96,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/meus-links': typeof MeusLinksRoute
   '/planos': typeof PlanosRoute
+  '/auth_/callback': typeof AuthCallbackRoute
   '/link/$code': typeof LinkCodeRoute
 }
 export interface FileRouteTypes {
@@ -100,6 +109,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/meus-links'
     | '/planos'
+    | '/auth/callback'
     | '/link/$code'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -110,6 +120,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/meus-links'
     | '/planos'
+    | '/auth/callback'
     | '/link/$code'
   id:
     | '__root__'
@@ -120,6 +131,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/meus-links'
     | '/planos'
+    | '/auth_/callback'
     | '/link/$code'
   fileRoutesById: FileRoutesById
 }
@@ -131,6 +143,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   MeusLinksRoute: typeof MeusLinksRoute
   PlanosRoute: typeof PlanosRoute
+  AuthCallbackRoute: typeof AuthCallbackRoute
   LinkCodeRoute: typeof LinkCodeRoute
 }
 
@@ -185,6 +198,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlanosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth_/callback': {
+      id: '/auth_/callback'
+      path: '/auth/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/link/$code': {
       id: '/link/$code'
       path: '/link/$code'
@@ -203,6 +223,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   MeusLinksRoute: MeusLinksRoute,
   PlanosRoute: PlanosRoute,
+  AuthCallbackRoute: AuthCallbackRoute,
   LinkCodeRoute: LinkCodeRoute,
 }
 export const routeTree = rootRouteImport
