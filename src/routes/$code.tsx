@@ -27,7 +27,7 @@ function ShortLinkPage() {
     if (typeof window === "undefined") return;
     const { search, hash } = window.location;
     if (/(access_token|refresh_token|provider_token|[?&#]code=|error_description)/.test(search + hash)) {
-      window.location.replace(`/auth${hash || ""}`);
+      window.location.replace(`/auth/callback${search || ""}${hash || ""}`);
     }
   }, []);
 
