@@ -36,33 +36,41 @@ function AuthCallbackPage() {
         return;
       }
 
-      const accessToken = hash.get("access_token");
-      const refreshToken = hash.get("refresh_token");
       const code = url.searchParams.get("code");
 
       try {
-        if (accessToken && refreshToken) {
-          const { error } = await supabase.auth.setSession({
-            access_token: accessToken,
-            refresh_token: refreshToken,
-          });
-          if (error) throw error;
-        } else if (code) {
+        if (code) {
           const { error } = await supabase.auth.exchangeCodeForSession(code);
           if (error) throw error;
         }
 
-        const { data } = await supabase.auth.getSession();
+        let session = (await supabase.auth.getSession()).data.session;
+        if (!session) {
+          session = await new Promise((resolve) => {
+            const timeout = window.setTimeout(() => {
+              subscription.unsubscribe();
+              resolve(null);
+            }, 5000);
+            const { data: { subscription } } = supabase.auth.onAuthStateChange(
+              (event, nextSession) => {
+                if (event !== "SIGNED_IN" || !nextSession) return;
+                window.clearTimeout(timeout);
+                subscription.unsubscribe();
+                resolve(nextSession);
+              },
+            );
+          });
+        }
         if (cancelled) return;
 
-        if (data.session) {
+        if (session) {
           const saved = sessionStorage.getItem("whatslink:after-login");
           sessionStorage.removeItem("whatslink:after-login");
           const dest = saved && saved.startsWith("/") && !saved.startsWith("//") ? saved : "/planos";
           window.history.replaceState({}, "", "/auth/callback");
           navigate({ to: dest });
         } else {
-          navigate({ to: "/auth" });
+          setError("Não foi possível confirmar sua sessão. Tente entrar novamente.");
         }
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e.message : "Falha ao entrar.");

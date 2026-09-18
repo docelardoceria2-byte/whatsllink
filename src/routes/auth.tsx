@@ -1,7 +1,6 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/hooks/useAuth";
 
 export const Route = createFileRoute("/auth")({
@@ -76,16 +75,16 @@ function AuthPage() {
             } catch {
               /* ignore */
             }
-            const result = await lovable.auth.signInWithOAuth("google", {
-              redirect_uri: `${window.location.origin}/auth/callback`,
+            const { error } = await supabase.auth.signInWithOAuth({
+              provider: "google",
+              options: {
+                redirectTo: `${window.location.origin}/auth/callback`,
+              },
             });
-            if (result.error) {
+            if (error) {
               setBusy(false);
               setMsg("Não foi possível entrar com o Google. Tente novamente.");
-              return;
             }
-            if (result.redirected) return;
-            navigate({ to: "/planos" });
           }}
           className="mt-5 w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-accent disabled:opacity-60"
         >
